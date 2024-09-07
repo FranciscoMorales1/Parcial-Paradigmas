@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+int main(void) {
+
+
+  
+
+  int num = 5;
+  int op = num; 
+  
+
+  for (int i = 1; i < num ; i++) {
+       op *= i; 
+        
+  }
+    printf("%d\n", op);
+    
+    
+  }
