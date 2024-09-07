@@ -1,0 +1,21 @@
+La salida de los programas son: 
+
+NO OPTIMIZADO: 
+
+Nombre: Carlos Gomez
+Edad: 20
+ID: 12345678
+Calificaciones: 85 90 78 
+Memoria utilizada: 272 bytes
+
+OPTIMIZADO: 
+
+
+
+Nombre: Carlos Gomez
+Edad: 20
+ID: 12345678
+Calificaciones: 85 90 78 
+Memoria utilizada: 82 bytes
+
+Se observa un menor uso de memoria en el programa optimizado. 
