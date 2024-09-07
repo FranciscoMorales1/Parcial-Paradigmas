@@ -1,0 +1,19 @@
+Imperativo (Python):
+
+
+Cómo: El enfoque imperativo se basa en el uso de estructuras de control, como bucles y condicionales, para manipular los datos de forma explícita. El algoritmo Bubble Sort intercambia los elementos iterativamente hasta que la lista está ordenada.
+
+Ventajas: Claridad sobre cada paso del proceso, control total sobre el flujo de la ejecución.
+
+Desventajas: Mayor complejidad de código; es fácil cometer errores al manipular los datos explícitamente, especialmente en problemas más complejos. El código es menos conciso.
+
+
+
+Declarativo (Haskell):
+
+
+Qué: En el enfoque declarativo, especificamos el resultado deseado (en este caso, los estudiantes ordenados) sin detallar los pasos intermedios explícitos para lograrlo. En lugar de un bucle, utilizamos funciones de orden superior para aplicar las reglas de ordenamiento.
+
+Ventajas: El código es más conciso, legible, y la lógica es clara. Se favorece la reutilización de funciones, lo que hace el código más limpio y libre de detalles innecesarios sobre cómo se manipulan los datos.
+
+Desventajas: La abstracción puede hacer que sea menos intuitivo para alguien acostumbrado a la programación imperativa. Depende de una comprensión más profunda de las funciones y la composición de funciones.
