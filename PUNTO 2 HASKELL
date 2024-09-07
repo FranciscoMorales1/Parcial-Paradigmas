@@ -1,0 +1,13 @@
+import Data.List (sortBy)
+import Data.Ord (comparing)
+
+-- Lista de estudiantes con nombre y calificación
+estudiantes :: [(String, Int)]
+estudiantes = [("Ana", 85), ("Carlos", 92), ("Luis", 85), ("Miguel", 95), ("Ana B.", 92)]
+
+-- Ordenar por calificaciones y luego por nombres
+ordenEstudiantes :: [(String, Int)] -> [(String, Int)]
+ordenEstudiantes = sortBy (comparing (negate . snd) <> comparing fst)
+
+main :: IO ()
+main = mapM_ print (ordenEstudiantes estudiantes)
