@@ -1,0 +1,72 @@
+
+
+//FUNCION ITERATIVA Y RENDIMIENTO 
+
+
+
+#include <stdio.h>
+#include <time.h>
+
+int factorial_recursivo(int num) {
+  if (num == 0 || num == 1) {
+    return 1;
+  }
+  return num * factorial_recursivo(num - 1);
+}
+
+int main() {
+  int num = 999999999; // Cambia este valor para probar otros números
+  clock_t start, end;
+  double cpu_time_used;
+
+  // Medir tiempo de la versión recursiva
+  start = clock();
+  int resultado_recursivo = factorial_recursivo(num);
+  end = clock();
+  cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+  printf("Recursivo: Resultado = %d, Tiempo = %f segundos\n",
+         resultado_recursivo, cpu_time_used);
+
+  return 0;
+}
+
+#include <stdio.h>
+#include <time.h>
+
+
+
+
+
+// FUNCION RECURSIVA Y RENDIMEINTO 
+
+/*
+
+
+
+
+int factorial_iterativo(int num) {
+  int op = 1;
+  for (int i = 1; i <= num; i++) {
+    op *= i;
+  }
+  return op;
+}
+// Proceso para ejecutar los metodos y evaluar el rendimiento
+
+int main() {
+  int num = 999999999;
+  clock_t start, end;
+  double cpu_time_used;
+
+  start = clock();
+  int resultado_iterativo = factorial_iterativo(num);
+  end = clock();
+  cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+  printf("Iterativo: Resultado = %d, Tiempo = %f segundos\n",
+         resultado_iterativo, cpu_time_used);
+
+  return 0;
+}
+*/
