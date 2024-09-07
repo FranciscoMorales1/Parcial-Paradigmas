@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Definición de la estructura para almacenar información del estudiante (optimizada)
+typedef struct {
+    char *nombre;
+    char *apellido;
+    unsigned int edad : 8; // Uso de un campo de bits
+    char *ID;
+    int *calificaciones;
+    size_t num_calificaciones;
+} Estudiante;
+
+// Función para crear un estudiante optimizado
+Estudiante *crear_estudiante(const char *nombre, const char *apellido, unsigned int edad, const char *ID, int *calificaciones, size_t num_calificaciones) {
+    Estudiante *estudiante = (Estudiante *)malloc(sizeof(Estudiante));
+
+    estudiante->nombre = strdup(nombre);   // Asignar solo la memoria necesaria
+    estudiante->apellido = strdup(apellido);
+    estudiante->ID = strdup(ID);
+    estudiante->edad = edad;
+
+    estudiante->calificaciones = (int *)malloc(num_calificaciones * sizeof(int));
+    memcpy(estudiante->calificaciones, calificaciones, num_calificaciones * sizeof(int));
+
+    estudiante->num_calificaciones = num_calificaciones;
+    return estudiante;
+}
+
+// Función para liberar un estudiante
+void liberar_estudiante(Estudiante *estudiante) {
+    free(estudiante->nombre);
+    free(estudiante->apellido);
+    free(estudiante->ID);
+    free(estudiante->calificaciones);
+    free(estudiante);
+}
+
+// Función para calcular el uso de memoria
+size_t calcular_memoria(Estudiante *estudiante) {
+    return sizeof(Estudiante) + strlen(estudiante->nombre) + 1 + strlen(estudiante->apellido) + 1 + strlen(estudiante->ID) + 1 + estudiante->num_calificaciones * sizeof(int);
+}
+
+// Función para imprimir los detalles del estudiante
+void imprimir_estudiante(Estudiante *estudiante) {
+    printf("Nombre: %s %s\nEdad: %u\nID: %s\nCalificaciones: ", estudiante->nombre, estudiante->apellido, estudiante->edad, estudiante->ID);
+    for (size_t i = 0; i < estudiante->num_calificaciones; i++) {
+        printf("%d ", estudiante->calificaciones[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int calificaciones[] = {85, 90, 78};
+    Estudiante *estudiante = crear_estudiante("Carlos", "Gomez", 20, "12345678", calificaciones, 3);
+
+    imprimir_estudiante(estudiante);
+    printf("Memoria utilizada: %zu bytes\n", calcular_memoria(estudiante));
+
+    liberar_estudiante(estudiante);
+
+    return 0;
+}
