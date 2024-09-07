@@ -1,0 +1,52 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Definición de la estructura para almacenar información del estudiante
+typedef struct {
+    char nombre[100];   // Tamaño fijo grande
+    char apellido[100]; // Tamaño fijo grande
+    unsigned int edad;
+    char ID[20];        // Tamaño fijo grande
+    int calificaciones[10]; // Suposición de hasta 10 calificaciones
+    size_t num_calificaciones;
+} Estudiante;
+
+// Función para crear un estudiante sin optimización
+void crear_estudiante(Estudiante *estudiante, const char *nombre, const char *apellido, unsigned int edad, const char *ID, int *calificaciones, size_t num_calificaciones) {
+    // Copiamos los datos al buffer de tamaño fijo
+    snprintf(estudiante->nombre, 100, "%s", nombre);
+    snprintf(estudiante->apellido, 100, "%s", apellido);
+    snprintf(estudiante->ID, 20, "%s", ID);
+    estudiante->edad = edad;
+
+    for (size_t i = 0; i < num_calificaciones; i++) {
+        estudiante->calificaciones[i] = calificaciones[i];
+    }
+    estudiante->num_calificaciones = num_calificaciones;
+}
+
+// Función para imprimir los detalles del estudiante
+void imprimir_estudiante(Estudiante *estudiante) {
+    printf("Nombre: %s %s\nEdad: %u\nID: %s\nCalificaciones: ", estudiante->nombre, estudiante->apellido, estudiante->edad, estudiante->ID);
+    for (size_t i = 0; i < estudiante->num_calificaciones; i++) {
+        printf("%d ", estudiante->calificaciones[i]);
+    }
+    printf("\n");
+}
+
+// Función para calcular el uso de memoria
+size_t calcular_memoria() {
+    return sizeof(Estudiante); // Suma del tamaño fijo del struct
+}
+
+int main() {
+    Estudiante estudiante;
+    int calificaciones[] = {85, 90, 78};
+    crear_estudiante(&estudiante, "Carlos", "Gomez", 20, "12345678", calificaciones, 3);
+
+    imprimir_estudiante(&estudiante);
+    printf("Memoria utilizada: %zu bytes\n", calcular_memoria());
+
+    return 0;
+}
