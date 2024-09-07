@@ -1,0 +1,31 @@
+import sys
+
+# Clase para representar un estudiante (sin optimización)
+class Estudiante:
+    def __init__(self, nombre, apellido, edad, ID, calificaciones):
+        self.nombre = nombre.ljust(100)  # Reservamos 100 bytes para el nombre, aunque no siempre sea necesario
+        self.apellido = apellido.ljust(100)  # Reservamos 100 bytes para el apellido
+        self.edad = edad
+        self.ID = ID.ljust(20)  # Reservamos 20 bytes para el ID
+        self.calificaciones = [0] * 10  # Asumimos un máximo de 10 calificaciones
+
+        # Copiamos las calificaciones reales al array de 10 espacios
+        for i in range(len(calificaciones)):
+            self.calificaciones[i] = calificaciones[i]
+
+    def calcular_memoria(self):
+        # Calculamos la memoria ocupada por los campos de texto y el array de calificaciones fijo
+        return sys.getsizeof(self.nombre) + sys.getsizeof(self.apellido) + sys.getsizeof(self.ID) + sys.getsizeof(self.calificaciones)
+
+    def imprimir(self):
+        # Imprimimos los datos del estudiante
+        print(f"Nombre: {self.nombre.strip()} {self.apellido.strip()}")
+        print(f"Edad: {self.edad}")
+        print(f"ID: {self.ID.strip()}")
+        print(f"Calificaciones: {self.calificaciones}")
+        print(f"Memoria utilizada: {self.calcular_memoria()} bytes")
+
+# Ejemplo de uso
+calificaciones = [85, 90, 78]  # Un array de calificaciones
+estudiante = Estudiante("Carlos", "Gomez", 20, "12345678", calificaciones)  # Creamos un nuevo estudiante
+estudiante.imprimir()  # Imprimimos los datos del estudiante
