@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>  // Incluimos esta biblioteca para usar funciones como `strdup`
+
+// Definición del `struct` para almacenar información del estudiante (versión optimizada)
+typedef struct {
+    char *nombre;  // Usamos punteros para asignar dinámicamente el espacio necesario para el nombre
+    char *apellido;  // Igual para el apellido
+    unsigned int edad : 8;  // Solo usamos 8 bits para almacenar la edad, ya que es suficiente
+    char *ID;  // Usamos punteros para asignar dinámicamente el espacio necesario para el ID
+    int *calificaciones;  // Un puntero para un array dinámico de calificaciones
+    size_t num_calificaciones;  // Número real de calificaciones
+} Estudiante;  // Definimos un nuevo tipo de dato `Estudiante`
+
+// Función para crear un estudiante (optimizada)
+Estudiante *crear_estudiante(const char *nombre, const char *apellido, unsigned int edad, const char *ID, int *calificaciones, size_t num_calificaciones) {
+    // Asignamos memoria dinámica para la estructura del estudiante
+    Estudiante *estudiante = (Estudiante *)malloc(sizeof(Estudiante));  
+
+    // Asignamos solo la memoria necesaria para el nombre, apellido y ID usando `strdup`
+    estudiante->nombre = strdup(nombre);   
+    estudiante->apellido = strdup(apellido); 
+    estudiante->ID = strdup(ID);  
+
+    estudiante->edad = edad;  // Asignamos la edad con 8 bits (eficiencia en memoria)
+
+    // Asignamos memoria solo para las calificaciones necesarias
+    estudiante->calificaciones = (int *)malloc(num_calificaciones * sizeof(int));
+    // Copiamos las calificaciones proporcionadas al array dinámico
+    memcpy(estudiante->calificaciones, calificaciones, num_calificaciones * sizeof(int));
+
+    estudiante->num_calificaciones = num_calificaciones;  // Guardamos el número de calificaciones
+
+    return estudiante;  // Retornamos el puntero al nuevo estudiante
+}
+
+// Función para liberar un estudiante
+void liberar_estudiante(Estudiante *estudiante) {
+    free(estudiante->nombre);  // Liberamos la memoria asignada para el nombre
+    free(estudiante->apellido);  // Liberamos la memoria asignada para el apellido
+    free(estudiante->ID);  // Liberamos la memoria asignada para el ID
+    free(estudiante->calificaciones);  // Liberamos la memoria asignada para las calificaciones
+    free(estudiante);  // Finalmente, liberamos la estructura del estudiante
+}
+
+// Función para calcular el uso de memoria
+size_t calcular_memoria(Estudiante *estudiante) {
+    // Calculamos la memoria total sumando el tamaño del `struct` y las cadenas de texto dinámicas
+    return sizeof(Estudiante) + strlen(estudiante->nombre) + 1 + strlen(estudiante->apellido) + 1 + strlen(estudiante->ID) + 1 + estudiante->num_calificaciones * sizeof(int);
+}
+
+// Función para imprimir los detalles del estudiante
+void imprimir_estudiante(Estudiante *estudiante) {
+    // Imprimimos el nombre, apellido, edad y ID
+    printf("Nombre: %s %s\nEdad: %u\nID: %s\nCalificaciones: ", estudiante->nombre, estudiante->apellido, estudiante->edad, estudiante->ID);
+
+    // Recorremos las calificaciones y las imprimimos
+    for (size_t i = 0; i < estudiante->num_calificaciones; i++) {
+        printf("%d ", estudiante->calificaciones[i]);
+    }
+    printf("\n");  // Terminamos con una nueva línea
+}
+
+int main() {
+    int calificaciones[] = {85, 90, 78};  // Array de calificaciones que pasaremos a la función
+
+    // Creamos un estudiante de manera optimizada
+    Estudiante *estudiante = crear_estudiante("Carlos", "Gomez", 20, "12345678", calificaciones, 3);
+
+    imprimir_estudiante(estudiante);  // Imprimimos los datos del estudiante
+    printf("Memoria utilizada: %zu bytes\n", calcular_memoria(estudiante));  // Mostramos la memoria utilizada
+
+    liberar_estudiante(estudiante);  // Liberamos la memoria asignada
+
+    return 0;  // El programa finaliza
+}
