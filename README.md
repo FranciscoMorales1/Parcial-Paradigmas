@@ -1,1 +1,1 @@
-# Parcial-Paradigmas
+FRANCISCO MORALES
