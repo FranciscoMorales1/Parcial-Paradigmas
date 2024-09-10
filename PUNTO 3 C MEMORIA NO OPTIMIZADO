@@ -1,3 +1,6 @@
+//Falta ocnjunto de calificaciones. 
+/// Eliminar, modificar, añadir. 
+//Mensaje de confirmación con respecto a borrar y crear mostrando el uso de memoria. 
 
 #include <stdio.h>
 #include <stdlib.h>
