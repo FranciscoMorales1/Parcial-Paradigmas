@@ -2,47 +2,56 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Definición de la estructura para almacenar información del estudiante (optimizada)
+// Definición de la estructura para almacenar información del estudiante con optimización
 typedef struct {
-    char *nombre;
-    char *apellido;
-    unsigned int edad : 8; // Uso de un campo de bits
-    char *ID;
-    int *calificaciones;
+    char *nombre;           // Cadena dinámica para el nombre
+    char *apellido;         // Cadena dinámica para el apellido
+    unsigned int edad;
+    char *ID;               // Cadena dinámica para el ID
+    int *calificaciones;    // Arreglo dinámico de calificaciones
     size_t num_calificaciones;
 } Estudiante;
 
-// Función para crear un estudiante optimizado
-Estudiante *crear_estudiante(const char *nombre, const char *apellido, unsigned int edad, const char *ID, int *calificaciones, size_t num_calificaciones) {
-    Estudiante *estudiante = (Estudiante *)malloc(sizeof(Estudiante));
+// Definición de una lista dinámica para almacenar estudiantes
+Estudiante *lista_estudiantes = NULL; // Inicializamos como NULL
+int num_estudiantes = 0;              // Contador de estudiantes
 
-    estudiante->nombre = strdup(nombre);   // Asignar solo la memoria necesaria
-    estudiante->apellido = strdup(apellido);
-    estudiante->ID = strdup(ID);
-    estudiante->edad = edad;
+// Función para añadir un nuevo estudiante a la lista
+void crear_estudiante(const char *nombre, const char *apellido, unsigned int edad, const char *ID, int *calificaciones, size_t num_calificaciones) {
+    // Redimensionamos la lista para añadir un nuevo estudiante
+    lista_estudiantes = realloc(lista_estudiantes, (num_estudiantes + 1) * sizeof(Estudiante));
 
-    estudiante->calificaciones = (int *)malloc(num_calificaciones * sizeof(int));
-    memcpy(estudiante->calificaciones, calificaciones, num_calificaciones * sizeof(int));
+    if (lista_estudiantes == NULL) {
+        printf("Error al asignar memoria.\n");
+        return;
+    }
 
-    estudiante->num_calificaciones = num_calificaciones;
-    return estudiante;
+    Estudiante *nuevo_estudiante = &lista_estudiantes[num_estudiantes];
+
+    // Asignamos memoria exacta para las cadenas
+    nuevo_estudiante->nombre = malloc(strlen(nombre) + 1);   // +1 para el terminador null
+    strcpy(nuevo_estudiante->nombre, nombre);
+
+    nuevo_estudiante->apellido = malloc(strlen(apellido) + 1);
+    strcpy(nuevo_estudiante->apellido, apellido);
+
+    nuevo_estudiante->ID = malloc(strlen(ID) + 1);
+    strcpy(nuevo_estudiante->ID, ID);
+
+    nuevo_estudiante->edad = edad;
+
+    // Asignamos memoria exacta para las calificaciones
+    nuevo_estudiante->calificaciones = malloc(num_calificaciones * sizeof(int));
+    for (size_t i = 0; i < num_calificaciones; i++) {
+        nuevo_estudiante->calificaciones[i] = calificaciones[i];
+    }
+    nuevo_estudiante->num_calificaciones = num_calificaciones;
+
+    num_estudiantes++; // Aumentamos el número de estudiantes
+    printf("Estudiante con ID %s ha sido creado.\n", ID);
 }
 
-// Función para liberar un estudiante
-void liberar_estudiante(Estudiante *estudiante) {
-    free(estudiante->nombre);
-    free(estudiante->apellido);
-    free(estudiante->ID);
-    free(estudiante->calificaciones);
-    free(estudiante);
-}
-
-// Función para calcular el uso de memoria
-size_t calcular_memoria(Estudiante *estudiante) {
-    return sizeof(Estudiante) + strlen(estudiante->nombre) + 1 + strlen(estudiante->apellido) + 1 + strlen(estudiante->ID) + 1 + estudiante->num_calificaciones * sizeof(int);
-}
-
-// Función para imprimir los detalles del estudiante
+// Función para imprimir los detalles de un estudiante
 void imprimir_estudiante(Estudiante *estudiante) {
     printf("Nombre: %s %s\nEdad: %u\nID: %s\nCalificaciones: ", estudiante->nombre, estudiante->apellido, estudiante->edad, estudiante->ID);
     for (size_t i = 0; i < estudiante->num_calificaciones; i++) {
@@ -51,14 +60,103 @@ void imprimir_estudiante(Estudiante *estudiante) {
     printf("\n");
 }
 
+// Función para imprimir todos los estudiantes
+void imprimir_todos_estudiantes() {
+    for (int i = 0; i < num_estudiantes; i++) {
+        imprimir_estudiante(&lista_estudiantes[i]);
+        printf("\n");
+    }
+}
+
+// Función para modificar un estudiante por ID
+void modificar_estudiante(const char *ID, const char *nuevo_nombre, const char *nuevo_apellido, unsigned int nueva_edad, int *nuevas_calificaciones, size_t num_calificaciones) {
+    for (int i = 0; i < num_estudiantes; i++) {
+        if (strcmp(lista_estudiantes[i].ID, ID) == 0) {
+            // Reasignamos memoria para el nombre
+            free(lista_estudiantes[i].nombre);
+            lista_estudiantes[i].nombre = malloc(strlen(nuevo_nombre) + 1);
+            strcpy(lista_estudiantes[i].nombre, nuevo_nombre);
+
+            // Reasignamos memoria para el apellido
+            free(lista_estudiantes[i].apellido);
+            lista_estudiantes[i].apellido = malloc(strlen(nuevo_apellido) + 1);
+            strcpy(lista_estudiantes[i].apellido, nuevo_apellido);
+
+            lista_estudiantes[i].edad = nueva_edad;
+
+            // Reasignamos memoria para las calificaciones
+            free(lista_estudiantes[i].calificaciones);
+            lista_estudiantes[i].calificaciones = malloc(num_calificaciones * sizeof(int));
+            for (size_t j = 0; j < num_calificaciones; j++) {
+                lista_estudiantes[i].calificaciones[j] = nuevas_calificaciones[j];
+            }
+            lista_estudiantes[i].num_calificaciones = num_calificaciones;
+
+            printf("Estudiante con ID %s ha sido modificado.\n", ID);
+            return;
+        }
+    }
+    printf("Estudiante con ID %s no encontrado.\n", ID);
+}
+
+// Función para eliminar un estudiante por ID
+void eliminar_estudiante(const char *ID) {
+    for (int i = 0; i < num_estudiantes; i++) {
+        if (strcmp(lista_estudiantes[i].ID, ID) == 0) {
+            // Liberamos la memoria asignada al estudiante
+            free(lista_estudiantes[i].nombre);
+            free(lista_estudiantes[i].apellido);
+            free(lista_estudiantes[i].ID);
+            free(lista_estudiantes[i].calificaciones);
+
+            // Movemos los elementos hacia la izquierda para eliminar el estudiante
+            for (int j = i; j < num_estudiantes - 1; j++) {
+                lista_estudiantes[j] = lista_estudiantes[j + 1];
+            }
+            num_estudiantes--; // Disminuimos el número de estudiantes
+
+            // Redimensionamos la lista de estudiantes
+            lista_estudiantes = realloc(lista_estudiantes, num_estudiantes * sizeof(Estudiante));
+            printf("Estudiante con ID %s ha sido eliminado.\n", ID);
+            return;
+        }
+    }
+    printf("Estudiante con ID %s no encontrado.\n", ID);
+}
+
 int main() {
-    int calificaciones[] = {85, 90, 78};
-    Estudiante *estudiante = crear_estudiante("Carlos", "Gomez", 20, "12345678", calificaciones, 3);
+    // Crear estudiantes
+    int calificaciones1[] = {85, 90, 78};
+    crear_estudiante("Carlos", "Gomez", 20, "12345678", calificaciones1, 3);
 
-    imprimir_estudiante(estudiante);
-    printf("Memoria utilizada: %zu bytes\n", calcular_memoria(estudiante));
+    int calificaciones2[] = {88, 92, 80};
+    crear_estudiante("Ana", "Martinez", 22, "87654321", calificaciones2, 3);
 
-    liberar_estudiante(estudiante);
+    // Imprimir todos los estudiantes
+    imprimir_todos_estudiantes();
+
+    // Modificar un estudiante
+    int nuevas_calificaciones[] = {90, 95, 85};
+    modificar_estudiante("12345678", "Juan", "Perez", 21, nuevas_calificaciones, 3);
+
+    // Imprimir todos los estudiantes después de la modificación
+    imprimir_todos_estudiantes();
+
+    // Eliminar un estudiante
+    eliminar_estudiante("12345678");
+
+    // Imprimir todos los estudiantes después de la eliminación
+    imprimir_todos_estudiantes();
+
+    // Liberar la memoria al final
+    for (int i = 0; i < num_estudiantes; i++) {
+        free(lista_estudiantes[i].nombre);
+        free(lista_estudiantes[i].apellido);
+        free(lista_estudiantes[i].ID);
+        free(lista_estudiantes[i].calificaciones);
+    }
+    free(lista_estudiantes);
 
     return 0;
 }
+
